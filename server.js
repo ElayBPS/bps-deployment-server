@@ -39,7 +39,7 @@ server.post("/deploy", async (req,res) => {
         catch(error){
             console.log(error)
         }
-        await fs.rmdir(__dirname+'/'+req.body.repository.name)
+        await fs.remove(__dirname+'/'+req.body.repository.name)
         res.sendStatus(200)
     }
     else {
