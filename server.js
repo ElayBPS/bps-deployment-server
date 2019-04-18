@@ -2,6 +2,8 @@ const express = require('express')
 
 const bodyParser = require('body-parser')
 
+const fs = require('fs')
+
 const server = express()
 
 const PORT = process.env.PORT || 80
@@ -25,6 +27,7 @@ server.post("/deploy", (req,res) => {
     const secret = req.query.secret
     if (secret === "y2ocKkWgUM3pbisHLtbbwnDCoZddtT5D") {
         console.log(req.body)
+        fs.writeFileSync(__dirname+'/gitupdate-'+Date.now()+'.json', JSON.stringify(req.body))
         res.sendStatus(200)
     }
     else {
