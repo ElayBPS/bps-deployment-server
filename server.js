@@ -32,7 +32,8 @@ server.post("/deploy", async (req,res) => {
         fs.writeFileSync(__dirname+'/gitupdate-'+Date.now()+'.json', JSON.stringify(req.body, null, '\t'))
         await exec('git clone '+ req.body.repository.clone_url)
         await exec('gcloud builds submit --tag gcr.io/bps-test-ay/'+req.body.repository.name, {cwd:__dirname+'/'+req.body.repository.name})
-        await exec('gcloud beta run deploy --image gcr.io/bps-test-ay/'+req.body.repository.name, {cwd:__dirname+'/'+req.body.repository.name})
+        const result = await exec('gcloud beta run deploy --image gcr.io/bps-test-ay/'+req.body.repository.name, {cwd:__dirname+'/'+req.body.repository.name})
+        console.log(result)
         fs.rmdirSync(__dirname+'/'+req.body.repository.name)
         res.sendStatus(200)
     }
