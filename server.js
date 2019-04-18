@@ -27,7 +27,7 @@ server.post("/deploy", (req,res) => {
     const secret = req.query.secret
     if (secret === "y2ocKkWgUM3pbisHLtbbwnDCoZddtT5D") {
         console.log(req.body)
-        fs.writeFileSync(__dirname+'/gitupdate-'+Date.now()+'.json', JSON.stringify(req.body))
+        fs.writeFileSync(__dirname+'/gitupdate-'+Date.now()+'.json', JSON.stringify(req.body, null, '\t'))
         res.sendStatus(200)
     }
     else {
