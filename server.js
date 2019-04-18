@@ -30,10 +30,15 @@ server.post("/deploy", async (req,res) => {
     if (secret === "y2ocKkWgUM3pbisHLtbbwnDCoZddtT5D" && req.body.ref === 'refs/heads/master') {
         console.log(req.body)
         fs.writeFileSync(__dirname+'/gitupdate-'+Date.now()+'.json', JSON.stringify(req.body, null, '\t'))
-        await exec('git clone '+ req.body.repository.clone_url)
-        await exec('gcloud builds submit --tag gcr.io/bps-test-ay/'+req.body.repository.name, {cwd:__dirname+'/'+req.body.repository.name})
-        const result = await exec('gcloud beta run deploy '+req.body.repository.name+'-service --image gcr.io/bps-test-ay/'+req.body.repository.name+' --allow-unauthenticated', {cwd:__dirname+'/'+req.body.repository.name})
-        console.log(result)
+        try{
+            await exec('git clone '+ req.body.repository.clone_url)
+            await exec('gcloud builds submit --tag gcr.io/bps-test-ay/'+req.body.repository.name, {cwd:__dirname+'/'+req.body.repository.name})
+            const result = await exec('gcloud beta run deploy '+req.body.repository.name+'-service --image gcr.io/bps-test-ay/'+req.body.repository.name+' --allow-unauthenticated', {cwd:__dirname+'/'+req.body.repository.name})
+            console.log(result)
+        }
+        catch(error){
+            console.log(error)
+        }
         fs.rmdirSync(__dirname+'/'+req.body.repository.name)
         res.sendStatus(200)
     }
