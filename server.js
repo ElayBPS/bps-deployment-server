@@ -2,7 +2,7 @@ const express = require('express')
 
 const bodyParser = require('body-parser')
 
-const fs = require('fs')
+const fs = require('fs-extra')
 
 const exec = require('child-process-promise').exec
 
@@ -29,7 +29,7 @@ server.post("/deploy", async (req,res) => {
     const secret = req.query.secret
     if (secret === "y2ocKkWgUM3pbisHLtbbwnDCoZddtT5D" && req.body.ref === 'refs/heads/master') {
         console.log(req.body)
-        fs.writeFileSync(__dirname+'/gitupdate-'+Date.now()+'.json', JSON.stringify(req.body, null, '\t'))
+        await fs.writeFile(__dirname+'/gitupdate-'+Date.now()+'.json', JSON.stringify(req.body, null, '\t'))
         try{
             await exec('git clone '+ req.body.repository.clone_url)
             await exec('gcloud builds submit --tag gcr.io/bps-test-ay/'+req.body.repository.name, {cwd:__dirname+'/'+req.body.repository.name})
@@ -39,7 +39,7 @@ server.post("/deploy", async (req,res) => {
         catch(error){
             console.log(error)
         }
-        fs.rmdirSync(__dirname+'/'+req.body.repository.name)
+        await fs.rmdir(__dirname+'/'+req.body.repository.name)
         res.sendStatus(200)
     }
     else {
